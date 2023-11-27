@@ -15,6 +15,7 @@ import org.bson.BsonWriter;
 import org.bson.codecs.Codec;
 import org.bson.codecs.DecoderContext;
 import org.bson.codecs.EncoderContext;
+import org.bson.codecs.MapCodec;
 import org.bson.codecs.configuration.CodecConfigurationException;
 import org.bson.codecs.pojo.PropertyCodecRegistry;
 import org.bson.codecs.pojo.TypeWithTypeParameters;
@@ -47,7 +48,9 @@ class MorphiaMapPropertyCodecProvider extends MorphiaPropertyCodecProvider {
                 }
                 throw e;
             }
-        } else if (Enum.class.isAssignableFrom(type.getType())) {
+        }
+        // Testing: commenting out this else branch lets the tests in TestEnumCustomCodec pass
+        else if (Enum.class.isAssignableFrom(type.getType())) {
             return new EnumCodec(type.getType());
         }
         return null;

@@ -14,6 +14,8 @@ import org.bson.codecs.DecoderContext;
 import org.bson.codecs.EncoderContext;
 import org.bson.codecs.configuration.CodecProvider;
 import org.bson.codecs.configuration.CodecRegistry;
+import org.bson.codecs.pojo.PropertyCodecRegistry;
+import org.bson.codecs.pojo.TypeWithTypeParameters;
 import org.bson.types.ObjectId;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -25,6 +27,7 @@ import dev.morphia.annotations.Id;
 import dev.morphia.mapping.DiscriminatorFunction;
 import dev.morphia.mapping.MapperOptions;
 import dev.morphia.mapping.NamingStrategy;
+import dev.morphia.mapping.codec.MorphiaPropertyCodecProvider;
 import dev.morphia.test.TestBase;
 
 public class TestEnumCustomCodec extends TestBase {
@@ -68,6 +71,27 @@ public class TestEnumCustomCodec extends TestBase {
     Assert.assertEquals(list.get(1), e1.listCustomEnum.get(1).value());
   }
 
+  @Test
+  public void mapListStandardEnum() {
+    Datastore ds = setupCustomMapping();
+
+    ModelWithStandardEnumList e1 = new ModelWithStandardEnumList();
+    e1.listStandardEnum = List.of(StandardEnum.A, StandardEnum.B);
+
+    ds.save(e1);
+
+    ModelWithStandardEnumList found = ds.find(ModelWithStandardEnumList.class).first();
+    Assert.assertNotNull(found);
+    Assert.assertEquals(found.listStandardEnum.get(0), e1.listStandardEnum.get(0));
+    Assert.assertEquals(found.listStandardEnum.get(1), e1.listStandardEnum.get(1));
+
+    String collectionName = ds.getCollection(ModelWithStandardEnumList.class).getNamespace().getCollectionName();
+    Document doc = ds.getDatabase().getCollection(collectionName).find().first();
+    List<String> list = doc.getList("listStandardEnum", String.class);
+    Assert.assertEquals(list.get(0), e1.listStandardEnum.get(0).name());
+    Assert.assertEquals(list.get(1), e1.listStandardEnum.get(1).name());
+  }
+
   @SuppressWarnings("deprecated")
   private Datastore setupCustomMapping() {
     MapperOptions mapperOptions = MapperOptions.builder()
@@ -79,7 +103,7 @@ public class TestEnumCustomCodec extends TestBase {
         .build();
 
     Datastore ds = Morphia.createDatastore(getMongoClient(), TEST_DB_NAME, mapperOptions);
-    ds.getMapper().map(ModelWithEnum.class, ModelWithEnumList.class);
+    ds.getMapper().map(ModelWithEnum.class, ModelWithEnumList.class, ModelWithStandardEnumList.class);
     return ds;
   }
 
@@ -106,7 +130,7 @@ public class TestEnumCustomCodec extends TestBase {
     }
   }
 
-  private static class StringCustomEnumValueCodec<T extends Enum<T> & CustomEnumValue<String>> implements Codec<T> {
+  public static class StringCustomEnumValueCodec<T extends Enum<T> & CustomEnumValue<String>> implements Codec<T> {
 
     private final Class<T> type;
     private final Map<String, T> valueMap;
@@ -152,6 +176,15 @@ public class TestEnumCustomCodec extends TestBase {
     List<MyCustomEnum> listCustomEnum;
   }
 
+  @Entity
+  private static class ModelWithStandardEnumList {
+
+    @Id
+    ObjectId id;
+
+    List<StandardEnum> listStandardEnum;
+  }
+
 
   private static class CustomEnumValueMapper {
     private static <T extends Enum<T> & CustomEnumValue<V>, V> Map<V, T> map(Class<T> type) {
@@ -185,6 +218,11 @@ public class TestEnumCustomCodec extends TestBase {
     public String value() {
       return this.value;
     }
+  }
+
+  public enum StandardEnum {
+    A,
+    B;
   }
 
 }
