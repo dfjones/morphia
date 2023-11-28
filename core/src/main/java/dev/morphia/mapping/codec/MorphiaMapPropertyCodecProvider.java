@@ -48,9 +48,7 @@ class MorphiaMapPropertyCodecProvider extends MorphiaPropertyCodecProvider {
                 }
                 throw e;
             }
-        }
-        // Testing: commenting out this else branch lets the tests in TestEnumCustomCodec pass
-        else if (Enum.class.isAssignableFrom(type.getType())) {
+        } else if (Enum.class.isAssignableFrom(type.getType())) {
             return new EnumCodec(type.getType());
         }
         return null;
