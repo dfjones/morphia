@@ -9,12 +9,12 @@
 
     <groupId>dev.morphia.morphia</groupId>
     <artifactId>morphia</artifactId>
-    <version>2.4.8-SNAPSHOT</version>
+    <version>2.4.9-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>morphia</name>
-    <url>https://github.com/morphiaorg/morphia</url>
-    <description>mongodb object-document mapper in Java based on https://github.com/mongodb/mongo-java-driver</description>
+    <url>https://github.com/MorphiaOrg/morphia</url>
+    <description>MongoDB object-document mapper in Java based on https://github.com/mongodb/mongo-java-driver</description>
 
     <scm>
         <connection>scm:git:git@github.com:MorphiaOrg/morphia.git</connection>
@@ -23,13 +23,13 @@
     </scm>
 
     <properties>
-        <kotlin.version>1.9.20</kotlin.version>
+        <kotlin.version>1.9.21</kotlin.version>
         <awaitility.version>1.7.0</awaitility.version>
         <driver.version>4.11.1</driver.version>
         <driver.minor.version>4.7</driver.minor.version>
-        <jackson.version>2.15.3</jackson.version>
+        <jackson.version>2.16.0</jackson.version>
         <json.assert.version>1.5.1</json.assert.version>
-        <logback.version>1.4.11</logback.version>
+        <logback.version>1.4.13</logback.version>
         <maven.version>3.9.5</maven.version>
         <revapi.maven.plugin.version>0.15.0</revapi.maven.plugin.version>
         <revapi.java.version>0.28.1</revapi.java.version>
@@ -105,7 +105,7 @@
             <plugin>
                 <groupId>io.github.git-commit-id</groupId>
                 <artifactId>git-commit-id-maven-plugin</artifactId>
-                <version>6.0.0</version>
+                <version>7.0.0</version>
                 <executions>
                     <execution>
                         <id>git info</id>
@@ -178,7 +178,7 @@
             <dependency>
                 <groupId>org.testcontainers</groupId>
                 <artifactId>mongodb</artifactId>
-                <version>1.19.2</version>
+                <version>1.19.3</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -241,7 +241,7 @@
             <dependency>
                 <groupId>org.kohsuke</groupId>
                 <artifactId>github-api</artifactId>
-                <version>1.317</version>
+                <version>1.318</version>
             </dependency>
             <dependency>
                 <groupId>org.ow2.asm</groupId>
@@ -251,7 +251,7 @@
             <dependency>
                 <groupId>org.jsoup</groupId>
                 <artifactId>jsoup</artifactId>
-                <version>1.16.2</version>
+                <version>1.17.1</version>
             </dependency>
             <dependency>
                 <groupId>org.asciidoctor</groupId>
@@ -278,12 +278,12 @@
             <dependency>
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy</artifactId>
-                <version>1.14.9</version>
+                <version>1.14.10</version>
             </dependency>
             <dependency>
                 <groupId>io.github.classgraph</groupId>
                 <artifactId>classgraph</artifactId>
-                <version>4.8.164</version>
+                <version>4.8.165</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
