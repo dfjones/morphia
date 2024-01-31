@@ -249,8 +249,8 @@ public final class UpdateOperators {
      * @return the update operator
      * @update.operator $pull
      */
-    public static UpdateOperator pull(String field, Filter filter) {
-        return new PullOperator(field, filter);
+    public static UpdateOperator pull(String field, Object value) {
+        return new PullOperator(field, value);
     }
 
     /**

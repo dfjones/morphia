@@ -145,9 +145,15 @@ public class UpdateOpsImpl<T> extends UpdateBase<T> implements UpdateOperations<
         return this;
     }
 
+//    @Override
+//    public UpdateOperations<T> removeAll(String field, Object value) {
+//        add(UpdateOperators.pull(field, Filters.eq(field, value)));
+//        return this;
+//    }
+
     @Override
     public UpdateOperations<T> removeAll(String field, Object value) {
-        add(UpdateOperators.pull(field, Filters.eq(field, value)));
+        add(UpdateOperators.pull(field, value));
         return this;
     }
 

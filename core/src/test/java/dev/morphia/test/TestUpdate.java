@@ -10,13 +10,15 @@ import org.testng.annotations.Test;
 
 import com.mongodb.client.result.UpdateResult;
 
+import dev.morphia.UpdateOptions;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.query.Query;
-import dev.morphia.query.UpdateOperations;
+import dev.morphia.query.filters.Filters;
+import dev.morphia.query.updates.PullOperator;
+import dev.morphia.query.updates.UpdateOperator;
 
-@SuppressWarnings("removal")
-public class TestLegacyUpdate extends TestBase {
+public class TestUpdate extends TestBase {
 
   private EmbeddedDocument testEmbeddedDoc1 = new EmbeddedDocument(
       "foo1",
@@ -28,24 +30,38 @@ public class TestLegacyUpdate extends TestBase {
       "bar2",
       "baz2");
 
-  public TestLegacyUpdate() {
-    super(buildConfig(MyDocument.class, EmbeddedDocument.class)
-        .legacy());
+  public TestUpdate() {
+    super(buildConfig(MyDocument.class, EmbeddedDocument.class));
   }
 
   @Test
-  public void testRemoveAllUpdate() {
+  public void testPullOp() {
     createTestDocuments();
 
-    Query<MyDocument> query = getDs().createQuery(MyDocument.class);
+    Query<MyDocument> query = getDs().find(MyDocument.class);
     EmbeddedDocument onlyField2 = new EmbeddedDocument(null, "bar1", null);
 
-    UpdateOperations<MyDocument> removeAllOp = getDs().createUpdateOperations(MyDocument.class)
-        .removeAll("embeddedDocs", onlyField2);
-
-    UpdateResult result = getDs().update(query, removeAllOp);
+    UpdateOperator operator = new PullOperator("embeddedDocs", onlyField2);
+    UpdateResult result = query.update(new UpdateOptions(), operator);
 
     Assert.assertEquals(result.getModifiedCount(), 1);
+
+    Query<MyDocument> updatedQuery = getDs().find(MyDocument.class);
+    MyDocument resultDoc = updatedQuery.first();
+    Assert.assertFalse(resultDoc.embeddedDocs.contains(testEmbeddedDoc1));
+  }
+
+  @Test
+  public void testPullOpWithFilter() {
+    createTestDocuments();
+
+    Query<MyDocument> query = getDs().find(MyDocument.class);
+    // This is how we could write this more explicitly
+    UpdateOperator operator = new PullOperator("embeddedDocs", Filters.eq("field2", "bar1"));
+    UpdateResult result = query.update(new UpdateOptions(), operator);
+
+    Assert.assertEquals(result.getModifiedCount(), 1);
+
     Query<MyDocument> updatedQuery = getDs().find(MyDocument.class);
     MyDocument resultDoc = updatedQuery.first();
     Assert.assertFalse(resultDoc.embeddedDocs.contains(testEmbeddedDoc1));
