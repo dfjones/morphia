@@ -14,6 +14,8 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.query.Query;
 import dev.morphia.query.UpdateOperations;
+import dev.morphia.query.filters.Filter;
+import dev.morphia.query.filters.Filters;
 
 @SuppressWarnings("removal")
 public class TestLegacyUpdate extends TestBase {
@@ -44,11 +46,29 @@ public class TestLegacyUpdate extends TestBase {
         .removeAll("embeddedDocs", onlyField2);
 
     UpdateResult result = getDs().update(query, removeAllOp);
-
     Assert.assertEquals(result.getModifiedCount(), 1);
+
     Query<MyDocument> updatedQuery = getDs().find(MyDocument.class);
     MyDocument resultDoc = updatedQuery.first();
     Assert.assertFalse(resultDoc.embeddedDocs.contains(testEmbeddedDoc1));
+  }
+
+  @Test
+  public void testRemoveAllWithFilter() {
+    createTestDocuments();
+
+    Query<MyDocument> query = getDs().createQuery(MyDocument.class);
+    Filter filter = Filters.eq("field3", "baz2");
+
+    UpdateOperations<MyDocument> removeAllOp = getDs().createUpdateOperations(MyDocument.class)
+        .removeAll("embeddedDocs", filter);
+
+    UpdateResult result = getDs().update(query, removeAllOp);
+    Assert.assertEquals(result.getModifiedCount(), 1);
+
+    Query<MyDocument> updatedQuery = getDs().find(MyDocument.class);
+    MyDocument resultDoc = updatedQuery.first();
+    Assert.assertFalse(resultDoc.embeddedDocs.contains(testEmbeddedDoc2));
   }
 
   private void createTestDocuments() {
